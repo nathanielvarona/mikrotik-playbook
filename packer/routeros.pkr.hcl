@@ -57,21 +57,29 @@ variable "iso_checksum" {
   default = ""
 }
 
+locals {
+  ver_major = split(".", var.ros_version)[0]
+  ver_minor = split(".", var.ros_version)[1]
+  install_seq = local.ver_major >= 7 ? "aiy" : "ainy"
+}
+
 # Source
 source "virtualbox-iso" "mikrotik" {
   boot_command            = [
-    "ainy<wait10><wait10><wait10><enter>",
-    "<wait10><wait10><wait10><wait10><wait10>",
-    "<wait10><wait10><wait10><wait10>",
-    "admin<enter><wait>",
-    "<enter><wait>",
-    "<enter><wait5>",
-    "Y<wait5>",
-    "q<wait5>",
-    "<enter><wait5>",
-    "mikrotik<enter><wait>",
-    "mikrotik<enter><wait>",
-    "/ip dhcp-client add disabled=no interface=ether1<enter><wait5>"
+    local.install_seq,
+    "<wait10><wait10><wait10><wait10><wait10><wait10><wait10><wait10><wait10><wait10><wait10><enter>", # Waiting for Disk Formating and Packages Installation 
+    "<wait10><wait10>", # Waiting for First Reboot
+    "<wait2>", # Waiting for Login Ready
+    "admin<enter><wait2>",
+    "<enter><wait2>",
+    "<enter><wait2>",
+    "Y<wait2>",
+    "q<wait2>",
+    "<enter><wait2>",
+    "mikrotik<enter><wait2>",
+    "mikrotik<enter><wait2>",
+    "/ip dhcp-client add disabled=no interface=ether1<enter>",
+    "<wait2>"
   ]
 
   boot_wait               = "15s"
