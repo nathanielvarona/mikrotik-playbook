@@ -1,0 +1,17 @@
+Vagrant.configure(2) do |config|
+  config.ssh.username = "admin"
+  config.ssh.password = "mikrotik"
+  config.ssh.insert_key = false
+  config.vm.boot_timeout = 120
+  config.vm.communicator = "ssh"
+  config.vm.graceful_halt_timeout = 60
+  config.vm.guest = :linux
+  config.vm.provider "virtualbox" do |virtualbox|
+    virtualbox.memory = 256
+    virtualbox.cpus = 2
+    virtualbox.check_guest_additions = false
+    virtualbox.gui = false
+    virtualbox.customize ["setextradata", "global", "GUI/SuppressMessages", "all" ]
+  end
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+end
